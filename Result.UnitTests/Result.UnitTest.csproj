@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Monadas.Result\Result.csproj" />
+    <ProjectReference Include="..\Result\Result.csproj" />
   </ItemGroup>
 
 </Project>
