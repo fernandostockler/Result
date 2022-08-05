@@ -3,7 +3,7 @@ namespace Result.UnitTest;
 using FluentAssertions;
 using Result;
 
-public class Tests
+public class ResultTests
 {
     [SetUp]
     public void Setup()
@@ -11,93 +11,106 @@ public class Tests
     }
 
     [Test]
-    public void VerifySuccessfulResult()
+    public void VerifyCaseSuccessMethod()
     {
-        int value = 0;
-
         Result<int> successfulResult = 43;
 
-        bool result = successfulResult.CaseSuccess(x => value = x);
+        int value = 0;
 
-        if (result) _ = value.Should().Be(43);
+        if (successfulResult.CaseSuccess(x => value = x))
+            _ = value.Should().Be(43);
 
-        _ = successfulResult.ToString().Should().Be("43");
+        Exception? exception = null;
 
-        var result2 = successfulResult.CaseFailure(e => e.ToString());
+        Result<Exception> failedResult = new(new InvalidOperationException("failedResult"));
 
-        _ = result2.Should().Be(false);
-
-        var result3 = successfulResult.CaseFailure((e) => 0);
-
-        _ = result3.Should().Be(43);
+        if (!failedResult.CaseSuccess(x => exception = new Exception("failedResult2")))
+            _ = exception.Should().BeNull();
     }
 
     [Test]
-    public void VerifyFailedResult()
+    public void VerifyCaseFailureWithActionMethod()
     {
+        Result<int> successfulResult = 43;
+
+        int value = 0;
+
+        Exception? exception = null;
+
+        if (!successfulResult.CaseFailure(e => exception = new Exception("failedResult2")))
+        {
+            _ = exception.Should().BeNull();
+            _ = value.Should().Be(0);
+            _ = successfulResult.ToString().Should().Be("43");
+        }
+
         Result<Exception> failedResult = new(new InvalidOperationException("failedResult"));
 
-        Exception? exception = failedResult.CaseFailure(e => (InvalidOperationException)e);
+        if (failedResult.CaseFailure(e => value = 42))
+            _ = value.Should().Be(42);
+    }
 
-        _ = exception.Should().BeOfType<InvalidOperationException>();
+    [Test]
+    public void VerifyCaseFailureWithFunctionMethod()
+    {
+        Result<int> successfulResult = 43;
 
-        _ = exception.Message.Should().Be("failedResult");
+        int failureCode = successfulResult.CaseFailure(e => 42);
 
-        Exception? exception1 = null;
+        _ = failureCode.Should().Be(43);
 
-        bool result2 = failedResult.CaseSuccess(x => exception1 = new Exception("failedResult2"));
+        _ = successfulResult.ToString().Should().Be("43");
 
-        _ = exception1.Should().BeNull();
+        Result<Exception> failedResult = new(new InvalidOperationException("failedResult"));
 
-        _ = result2.Should().Be(false);
+        var result = failedResult.CaseFailure(e => e);
 
-        var result3 = failedResult.CaseFailure(e => e.ToString());
-
-        _ = result3.Should().Be(true);
-
+        _ = result.Should().BeOfType<InvalidOperationException>();
+        _ = result.Message.Should().Be("failedResult");
         _ = failedResult.ToString().Should().Be("System.InvalidOperationException: failedResult");
     }
 
     [Test]
-    public void VerifyMatchOnSuccess()
+    public void VerifyMatchWithAction()
     {
-        Result<int> successfulResult = 42;
-
-        var result = successfulResult.Match((x) => x, (e) => 0);
-
-        _ = result.Should().Be(42);
-
         int value = 0;
 
         void successAction(int x) => value = x * 2;
 
-        void failedAction(Exception e) => value = e.HResult;
+        void failedAction(Exception e) => value = 66;
+
+        Result<int> successfulResult = 42;
 
         successfulResult.Match(Success: successAction, Failure: failedAction);
 
         _ = value.Should().Be(42 * 2);
-    }
 
-    [Test]
-    public void VerifyMatchOnFailure()
-    {
+        value = 0;
+
         Result<int> failedfulResult = new(new Exception("failedResult"));
-
-        var result = failedfulResult.Match(
-            Success: (x) => new Exception("OnSuccess"),
-            Failure: (e) => e);
-
-        _ = result.Message.Should().Be("failedResult");
-
-        int value = 0;
-
-        void successAction(int x) => value = x * 2;
-
-        void failedAction(Exception e) => value = e.HResult;
 
         failedfulResult.Match(Success: successAction, Failure: failedAction);
 
-        _ = value.Should().Be(-2146233088);
+        _ = value.Should().Be(66);
+    }
+
+    [Test]
+    public void VerifyMatchWithFunction()
+    {
+        Result<int> successfulResult = 42;
+
+        int result = successfulResult.Match((x) => x * 3, (e) => 66);
+
+        _ = result.Should().Be(42 * 3);
+
+        Result<int> failedfulResult = new(new InvalidOperationException("failedResult"));
+
+        Exception? exception = failedfulResult.Match(
+            Success: (x) => new Exception("OnSuccess"),
+            Failure: (e) => e);
+
+        _ = exception.Should().BeOfType<InvalidOperationException>();
+        _ = exception.Message.Should().Be("failedResult");
     }
 
     [Test]
@@ -146,8 +159,6 @@ public class Tests
         _ = result2.Should().Be("invalid");
 
         _ = value.Should().Be("invalid");
-
-
     }
 
     [Test]
@@ -162,5 +173,3 @@ public class Tests
         _ = test2.ToString().Should().Be("(invalid)");
     }
 }
-
-public readonly record struct Person(string FirstName, string LastName, IEnumerable<string> ToDoList);
