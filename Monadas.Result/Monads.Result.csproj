@@ -13,10 +13,12 @@
 	<Authors>Fernando Stockler de Lima</Authors>
     <PackageIcon>extensions.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>functional-C#; monad; result;</PackageTags>
+    <PackageTags>functional-ccharp; monad; result-type;</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSymbols>True</IncludeSymbols>
+	  <VersionPrefix>0.8</VersionPrefix>
+	  <VersionSuffix>rc.1</VersionSuffix>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
