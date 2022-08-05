@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02B95F3D-2E4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Result", "Monadas.Result\Result.csproj", "{56530D95-CA9B-46A8-8663-ED344E1FBE6B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6D582DAA-BFCC-4033-BAD9-B9903BDBF417}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Result.UnitTest", "Monads.Result.UnitTests\Result.UnitTest.csproj", "{2E01E239-8077-4664-A151-25C08F45AC9F}"
 EndProject
 Global
