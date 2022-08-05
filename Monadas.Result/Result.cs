@@ -1,4 +1,4 @@
-﻿namespace Monads.Result;
+﻿namespace Result;
 
 using System;
 using System.Diagnostics.CodeAnalysis;

@@ -1,4 +1,4 @@
-﻿namespace Monads.Result;
+﻿namespace Result;
 
 /// <summary>
 /// Represents the result of a operation status.
