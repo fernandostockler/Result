@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -17,7 +17,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSymbols>True</IncludeSymbols>
-	  <VersionPrefix>0.8</VersionPrefix>
+	  <VersionPrefix>0.9</VersionPrefix>
 	  <VersionSuffix>rc.1</VersionSuffix>
   </PropertyGroup>
 

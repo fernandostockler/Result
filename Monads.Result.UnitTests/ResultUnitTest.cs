@@ -1,7 +1,7 @@
-namespace Monads.Result.UnitTests;
+namespace Result.UnitTest;
 
 using FluentAssertions;
-using global::Result;
+using Result;
 
 public class Tests
 {
