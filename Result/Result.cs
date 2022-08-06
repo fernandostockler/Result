@@ -60,6 +60,16 @@ public readonly record struct Result<T>
     }
 
     /// <summary>
+    /// If it is a successful result, execute the Success function, otherwise execute the defaultValue function.
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns>A <typeparamref name="T"/> value.</returns>
+    public R CaseSuccess<R>(Func<T, R> func, Func<Exception, R> defaultValue) => Status is ResultStatus.Success
+        ? func(Value!)
+        : defaultValue(Exception!);
+
+    /// <summary>
     /// If it is a failed result, execute the Failure action and return <see langword="true"/>, otherwise return <see langword="false"/>.
     /// </summary>
     /// <param name="Failure">The action to be executed in case the operation fail.</param>

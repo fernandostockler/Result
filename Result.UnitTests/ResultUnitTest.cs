@@ -139,6 +139,20 @@ public class ResultTests
                 "Correr",
                 "Descançar"
             });
+
+        Result<Person> resultPerson = JoeSmith;
+
+        //Result<string> nameResult = resultPerson.Map(p => $"{p.FirstName}, {p.LastName}. ToDoList: contains {p.ToDoList.Count()} items");
+
+        Result<string> nameResult = resultPerson
+            .Map(p => p.FirstName)
+            .Map(x => x + " => ")
+            .Map(x => x + "Wins.");
+
+        string name = nameResult.CaseSuccess(x => x, e => e.Message);
+
+        _ = name.Should().Be("Joe => Wins.");
+        //_ = name.Should().Be("Joe, Smith. ToDoList: contains 3 items");
     }
 
     [Test]
@@ -159,6 +173,15 @@ public class ResultTests
         _ = result2.Should().Be("invalid");
 
         _ = value.Should().Be("invalid");
+
+        Result<Person> resultPerson = new(new InvalidOperationException("Invalid person."));
+
+        Person person = resultPerson.CaseSuccess(
+            func: x => x,
+            defaultValue: e => new Person(e.Message, "", new List<string>()));
+
+        _ = person.Should().BeOfType<Person>();
+        _ = person.FirstName.Should().Be("Invalid person.");
     }
 
     [Test]
