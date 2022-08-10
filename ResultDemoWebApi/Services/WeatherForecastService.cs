@@ -14,13 +14,10 @@ public class WeatherForecastService
 
     public async Task<IResult> Get() => Results.Ok(await db.WeatherForecast.ToListAsync());
 
-    public async Task<IResult> GetById(int Id)
-    {
-        return await db.WeatherForecast.FindAsync(Id)
-            is WeatherForecast model
-                ? Results.Ok(model)
-                : Results.NotFound();
-    }
+    public async Task<IResult> GetById(int Id) => await db.WeatherForecast.FindAsync(Id)
+        is WeatherForecast model
+            ? Results.Ok(model)
+            : Results.NotFound();
 
     public async Task<IResult> Update(int Id)
     {
@@ -30,27 +27,27 @@ public class WeatherForecastService
 
         //update model properties here
 
-        await db.SaveChangesAsync();
+        _ = await db.SaveChangesAsync();
 
         return Results.NoContent();
     }
 
     public async Task<IResult> Add(WeatherForecast weatherForecast)
     {
-        db.WeatherForecast.Add(weatherForecast);
-        await db.SaveChangesAsync();
+        _ = db.WeatherForecast.Add(weatherForecast);
+        _ = await db.SaveChangesAsync();
+
         return Results.Created($"/WeatherForecasts/{weatherForecast.Id}", weatherForecast);
     }
 
     public async Task<IResult> Delete(int Id)
     {
-        if (await db.WeatherForecast.FindAsync(Id) is WeatherForecast weatherForecast)
-        {
-            db.WeatherForecast.Remove(weatherForecast);
-            await db.SaveChangesAsync();
-            return Results.Ok(weatherForecast);
-        }
+        if (await db.WeatherForecast.FindAsync(Id) is not WeatherForecast weatherForecast)
+            return Results.NotFound();
 
-        return Results.NotFound();
+        _ = db.WeatherForecast.Remove(weatherForecast);
+        _ = await db.SaveChangesAsync();
+
+        return Results.Ok(weatherForecast);
     }
 }

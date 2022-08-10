@@ -6,7 +6,7 @@ public static class WeatherForecastEndpoints
 {
     public static void MapWeatherForecastEndpoints(this IEndpointRouteBuilder routes)
     {
-        routes.MapGet("/api/WeatherForecast",
+        _ = routes.MapGet("/api/WeatherForecast",
 
             handler: async (WeatherForecastService weatherForecastService)
             => await weatherForecastService.Get())
@@ -16,7 +16,7 @@ public static class WeatherForecastEndpoints
             .Produces<List<WeatherForecast>>(StatusCodes.Status200OK);
 
 
-        routes.MapGet("/api/WeatherForecast/{id}",
+        _ = routes.MapGet("/api/WeatherForecast/{id}",
 
             handler: async (int Id, WeatherForecastService weatherForecastService)
             => await weatherForecastService.GetById(Id))
@@ -27,7 +27,7 @@ public static class WeatherForecastEndpoints
             .Produces(StatusCodes.Status404NotFound);
 
 
-        routes.MapPut("/api/WeatherForecast/{id}",
+        _ = routes.MapPut("/api/WeatherForecast/{id}",
 
             handler: async (int Id, WeatherForecastService weatherForecastService)
             => await weatherForecastService.Update(Id))
@@ -38,7 +38,7 @@ public static class WeatherForecastEndpoints
             .Produces(StatusCodes.Status204NoContent);
 
 
-        routes.MapPost("/api/WeatherForecast/",
+        _ = routes.MapPost("/api/WeatherForecast/",
 
             handler: async (WeatherForecast weatherForecast, WeatherForecastService weatherForecastService)
             => await weatherForecastService.Add(weatherForecast))
@@ -48,7 +48,7 @@ public static class WeatherForecastEndpoints
             .Produces<WeatherForecast>(StatusCodes.Status201Created);
 
 
-        routes.MapDelete("/api/WeatherForecast/{id}",
+        _ = routes.MapDelete("/api/WeatherForecast/{id}",
 
             handler: async (int Id, WeatherForecastService weatherForecastService)
             => await weatherForecastService.Delete(Id))
