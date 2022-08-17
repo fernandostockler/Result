@@ -22,7 +22,7 @@ public class ResultTests
 
         Exception? exception = null;
 
-        Result<Exception> failedResult = new(new InvalidOperationException("failedResult"));
+        Result<Exception> failedResult =  new(new InvalidOperationException("failedResult"));
 
         if (!failedResult.CaseSuccess(x => exception = new Exception("failedResult2")))
             _ = exception.Should().BeNull();
@@ -177,7 +177,7 @@ public class ResultTests
         Result<Person> resultPerson = new(new InvalidOperationException("Invalid person."));
 
         Person person = resultPerson.CaseSuccess(
-            func: x => x,
+            Success: x => x,
             defaultValue: e => new Person(e.Message, "", new List<string>()));
 
         _ = person.Should().BeOfType<Person>();

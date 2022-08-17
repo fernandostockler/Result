@@ -5,16 +5,30 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
 /// <summary>
-/// Represents the result of a operation: T | Exception
+/// Represents the result of a operation:
+///
+/// Value | Exception
+///
 /// </summary>
 /// <typeparam name="T">Bound value type</typeparam>
 public readonly record struct Result<T>
 {
-    ResultStatus Status { get; init; }
+    /// <summary>
+    /// Status of an operation.
+    /// </summary>
+    private ResultStatus Status { get; init; }
 
-    [MaybeNull()] T Value { get; init; }
+    /// <summary>
+    /// Bound value, result of operation.
+    /// </summary>
+    [MaybeNull()]
+    private T Value { get; init; } 
 
-    [MaybeNull()] Exception Exception { get; init; }
+    /// <summary>
+    /// Exception caught during operation.
+    /// </summary>
+    [MaybeNull()]
+    private Exception Exception { get; init; }
 
     /// <summary>
     /// Creates a successful result.
@@ -29,10 +43,10 @@ public readonly record struct Result<T>
     /// <summary>
     /// Creates a failed result.
     /// </summary>
-    /// <param name="e"><see cref="Exception"/></param>
-    public Result(Exception e)
+    /// <param name="exception"><see cref="Exception"/></param>
+    public Result(Exception exception)
     {
-        Exception = e;
+        Exception = exception;
         Status = ResultStatus.Failure;
     }
 
@@ -44,30 +58,27 @@ public readonly record struct Result<T>
     public static implicit operator Result<T>(T value) => new(value);
 
     /// <summary>
+    /// Verify if the result of the operation was successful.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsSuccess() => Status is ResultStatus.Success;
+
+    /// <summary>
+    /// Verify if the result of the operation was failure.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsFailure() => Status is ResultStatus.Failure;
+
+    /// <summary>
     /// If it is a successful result, execute the Success action and return <see langword="true"/>, otherwise return <see langword="false"/>.
     /// </summary>
     /// <param name="Success">The action to be executed in case the operation is successful.</param>
     /// <returns><see langword="true"/> If it is a successful result, otherwise <see langword="false"/>.</returns>
     public bool CaseSuccess(Action<T> Success)
     {
-        if (Status is ResultStatus.Success)
-        {
-            Success(Value!);
-            return true;
-        }
-        else // ResultStatus.Failure
-            return false;
+        if (IsSuccess()) Success(Value!);
+        return IsSuccess();
     }
-
-    /// <summary>
-    /// If it is a successful result, execute the Success function, otherwise execute the defaultValue function.
-    /// </summary>
-    /// <param name="func"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns>A <typeparamref name="T"/> value.</returns>
-    public R CaseSuccess<R>(Func<T, R> func, Func<Exception, R> defaultValue) => Status is ResultStatus.Success
-        ? func(Value!)
-        : defaultValue(Exception!);
 
     /// <summary>
     /// If it is a failed result, execute the Failure action and return <see langword="true"/>, otherwise return <see langword="false"/>.
@@ -76,24 +87,25 @@ public readonly record struct Result<T>
     /// <returns><see langword="true"/> If the result is a failure, otherwise <see langword="false"/>.</returns>
     public bool CaseFailure(Action<Exception> Failure)
     {
-        if (Status is ResultStatus.Failure)
-        {
-            Failure(Exception!);
-            return true;
-        }
-        else // ResultStatus.Success
-            return false;
+        if (IsFailure()) Failure(Exception!);
+        return IsFailure();
     }
+
+    /// <summary>
+    /// If it is a successful result, execute the Success function, otherwise execute the defaultValue function.
+    /// </summary>
+    /// <param name="Success"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns>A <typeparamref name="T"/> value.</returns>
+    public R CaseSuccess<R>(Func<T, R> Success, Func<Exception, R> defaultValue) => Match(Success, defaultValue);
 
     /// <summary>
     /// If it is a failed result, execute a function with the exception and return the result of the function, otherwise return the Value.
     /// </summary>
-    /// <param name="func">The function to run in case of failure.</param>
+    /// <param name="Failure">The function to run in case of failure.</param>
     /// <returns>A value of type <typeparamref name="T"/>.</returns>
     [Pure]
-    public T CaseFailure(Func<Exception, T> func) => Status is ResultStatus.Failure
-        ? func(Exception!)
-        : Value!;
+    public T CaseFailure(Func<Exception, T> Failure) => Match(x => x, Failure);
 
     /// <summary>
     /// If it is a successful result, it returns the value of the Success function, otherwise it returns the value of the Failure function.
@@ -103,10 +115,10 @@ public readonly record struct Result<T>
     /// <param name="Failure">The function to run if it is a failed result.</param>
     /// <returns>A value of type <typeparamref name="R"/>.</returns>
     [Pure]
-    public R Match<R>(Func<T, R> Success, Func<Exception, R> Failure)
-    => Status is ResultStatus.Success
-        ? Success(Value!)
-        : Failure(Exception!);
+    public R Match<R>(Func<T, R> Success, Func<Exception, R> Failure) =>
+        IsSuccess()
+            ? Success(Value!)
+            : Failure(Exception!);
 
     /// <summary>
     /// If it is a successful result, it executes the Success action, otherwise it executes the Failure action.
@@ -115,29 +127,29 @@ public readonly record struct Result<T>
     /// <param name="Failure">The action to run if it is a failed result.</param>
     public void Match(Action<T> Success, Action<Exception> Failure)
     {
-        if (Status is ResultStatus.Success)
-            Success(Value!);
-        else
-            Failure(Exception!);
+        if (IsSuccess()) Success(Value!);
+        else Failure(Exception!);
     }
 
     /// <summary>
     /// Projection from one value to another.
     /// </summary>
     /// <typeparam name="R">Resulting functor value type.</typeparam>
-    /// <param name="Map">Projection function.</param>
+    /// <param name="MapFunc">Projection function.</param>
     /// <returns>Mapped functor</returns>
     [Pure]
-    public Result<R> Map<R>(Func<T, R> Map) where R : IComparable<R> => Status is ResultStatus.Success
-        ? new Result<R>(Map(Value!))
-        : new Result<R>(Exception!);
+    public Result<R> Map<R>(Func<T, R> MapFunc) where R : IComparable<R> =>
+        Status is ResultStatus.Success
+            ? new Result<R>(MapFunc(Value!))
+            : new Result<R>(Exception!);
 
     /// <summary>
     /// Returns a string representation of a Result{T}.
     /// </summary>
     /// <returns>A value of type <see cref="string"/>.</returns>
     [Pure]
-    public override string ToString() => Status is ResultStatus.Success
-        ? Value?.ToString() ?? "(null)"
-        : Exception?.ToString() ?? "(invalid)";
+    public override string ToString() =>
+        IsSuccess()
+            ? Value?.ToString() ?? "(null)"
+            : Exception?.ToString() ?? "(invalid)";
 }
