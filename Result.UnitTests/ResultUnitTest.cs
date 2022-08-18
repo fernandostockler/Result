@@ -12,7 +12,7 @@ public class ResultTests
 
     [Test]
     public void VerifyCaseSuccessMethod()
-    {
+    {      
         Result<int> successfulResult = 43;
 
         int value = 0;

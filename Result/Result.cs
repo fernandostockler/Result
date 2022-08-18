@@ -16,19 +16,20 @@ public readonly record struct Result<T>
     /// <summary>
     /// Status of an operation.
     /// </summary>
-    private ResultStatus Status { get; init; }
+    private ResultStatus Status { get; }
 
     /// <summary>
     /// Bound value, result of operation.
     /// </summary>
-    [MaybeNull()]
-    private T Value { get; init; } 
+    [MaybeNull]
+    private T Value { get; }
 
     /// <summary>
     /// Exception caught during operation.
     /// </summary>
-    [MaybeNull()]
-    private Exception Exception { get; init; }
+    [MaybeNull]
+    private Exception Exception { get; }
+
 
     /// <summary>
     /// Creates a successful result.
@@ -50,24 +51,26 @@ public readonly record struct Result<T>
         Status = ResultStatus.Failure;
     }
 
+
     /// <summary>
     /// Implicit conversion from T to Result{T}
     /// </summary>
     /// <param name="value">Value</param>
-    [Pure]
-    public static implicit operator Result<T>(T value) => new(value);
+    [Pure] public static implicit operator Result<T>(T value) => new(value);
+
 
     /// <summary>
     /// Verify if the result of the operation was successful.
     /// </summary>
     /// <returns></returns>
-    public bool IsSuccess() => Status is ResultStatus.Success;
+    [Pure] public bool IsSuccess() => Status is ResultStatus.Success;
 
     /// <summary>
     /// Verify if the result of the operation was failure.
     /// </summary>
     /// <returns></returns>
-    public bool IsFailure() => Status is ResultStatus.Failure;
+    [Pure] public bool IsFailure() => Status is ResultStatus.Failure;
+
 
     /// <summary>
     /// If it is a successful result, execute the Success action and return <see langword="true"/>, otherwise return <see langword="false"/>.
@@ -91,21 +94,22 @@ public readonly record struct Result<T>
         return IsFailure();
     }
 
+
     /// <summary>
     /// If it is a successful result, execute the Success function, otherwise execute the defaultValue function.
     /// </summary>
     /// <param name="Success"></param>
     /// <param name="defaultValue"></param>
     /// <returns>A <typeparamref name="T"/> value.</returns>
-    public R CaseSuccess<R>(Func<T, R> Success, Func<Exception, R> defaultValue) => Match(Success, defaultValue);
+    [Pure] public R CaseSuccess<R>(Func<T, R> Success, Func<Exception, R> defaultValue) => Match(Success, defaultValue);
 
     /// <summary>
     /// If it is a failed result, execute a function with the exception and return the result of the function, otherwise return the Value.
     /// </summary>
     /// <param name="Failure">The function to run in case of failure.</param>
     /// <returns>A value of type <typeparamref name="T"/>.</returns>
-    [Pure]
-    public T CaseFailure(Func<Exception, T> Failure) => Match(x => x, Failure);
+    [Pure] public T CaseFailure(Func<Exception, T> Failure) => Match(x => x, Failure);
+
 
     /// <summary>
     /// If it is a successful result, it returns the value of the Success function, otherwise it returns the value of the Failure function.
@@ -130,6 +134,7 @@ public readonly record struct Result<T>
         if (IsSuccess()) Success(Value!);
         else Failure(Exception!);
     }
+
 
     /// <summary>
     /// Projection from one value to another.
