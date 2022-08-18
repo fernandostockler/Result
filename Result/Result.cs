@@ -16,19 +16,17 @@ public readonly record struct Result<T>
     /// <summary>
     /// Status of an operation.
     /// </summary>
-    private ResultStatus Status { get; }
+    ResultStatus Status { get; }
 
     /// <summary>
     /// Bound value, result of operation.
     /// </summary>
-    [MaybeNull]
-    private T Value { get; }
+    [MaybeNull] T Value { get; }
 
     /// <summary>
     /// Exception caught during operation.
     /// </summary>
-    [MaybeNull]
-    private Exception Exception { get; }
+    [MaybeNull] Exception Exception { get; }
 
 
     /// <summary>
@@ -135,7 +133,6 @@ public readonly record struct Result<T>
         else Failure(Exception!);
     }
 
-
     /// <summary>
     /// Projection from one value to another.
     /// </summary>
@@ -147,6 +144,7 @@ public readonly record struct Result<T>
         Status is ResultStatus.Success
             ? new Result<R>(MapFunc(Value!))
             : new Result<R>(Exception!);
+
 
     /// <summary>
     /// Returns a string representation of a Result{T}.
