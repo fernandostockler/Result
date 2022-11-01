@@ -13,6 +13,8 @@ using System.Diagnostics.Contracts;
 /// <typeparam name="T">Bound value type</typeparam>
 public readonly record struct Result<T>
 {
+    //Todo: testar async
+
     /// <summary>
     /// Status of an operation.
     /// </summary>
@@ -92,7 +94,6 @@ public readonly record struct Result<T>
         return IsFailure();
     }
 
-
     /// <summary>
     /// If it is a successful result, execute the Success function, otherwise execute the defaultValue function.
     /// </summary>
@@ -106,7 +107,7 @@ public readonly record struct Result<T>
     /// </summary>
     /// <param name="Failure">The function to run in case of failure.</param>
     /// <returns>A value of type <typeparamref name="T"/>.</returns>
-    [Pure] public T CaseFailure(Func<Exception, T> Failure) => Match(x => x, Failure);
+    [Pure] public T ValueOrDefault(Func<Exception, T> Failure) => Match(Success: value => value, Failure);
 
 
     /// <summary>

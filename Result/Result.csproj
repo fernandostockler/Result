@@ -17,9 +17,9 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSymbols>True</IncludeSymbols>
-	  <VersionPrefix>0.9.8</VersionPrefix>
-	  <VersionSuffix>rc.1</VersionSuffix>
-	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	<Version>1.0.0.0</Version>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageId>Stockler.Result</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
