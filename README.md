@@ -1,23 +1,22 @@
 # Result 
-[![wakatime](https://wakatime.com/badge/github/fernandostockler/Result.svg?logo=github&style=plastic)](https://wakatime.com/badge/github/fernandostockler/Result)
+<!--[![wakatime](https://wakatime.com/badge/github/fernandostockler/Result.svg?logo=github&style=plastic)](https://wakatime.com/badge/github/fernandostockler/Result)-->
 
-## Descrição
-`Result` representa o resultado de uma operação. 
-Se a operação falhar, `Result` conterá a exceção ocorrida; 
-caso contrário, `Result` conterá o valor resultante da operação.
+## Description
+`Result` represents the result of an operation. If the operation fails, Result will contain the exception that occurred;
+otherwise, `Result` will contain the value resulting from the operation.
 
-O método responsável pela operação deve retornar um `Result` com o valor resultante da operação, ou 
-em caso de falha, deve retornar um `Result` com uma exceção. O código consumidor deve extrair o 
-resultado através de um dos métodos disponíveis.
+The method responsible for the operation must return a `Result` with the value resulting from the operation, 
+or in case of failure, it must return a `Result` with an exception. 
+The consumer code must extract the result through one of the available methods.
 
-O resultado da operação pode ser extraido através de vários métodos como: 
-`Match()`, `CaseSuccess()`, `CaseFailure()`, `IsSuccess()` e `IsFailure()`.
+The result of the operation can be extracted through several methods such as: 
+`Match()`, `ValueOrDefault`, `CaseSuccess()`, `CaseFailure()`, `IsSuccess()` and `IsFailure()`.
 
-Note que nenhuma exceção é lançada. As exceções são apenas criadas e devolvidas para o código chamador que
-deverá decidir o que fazer com elas.
+Note that no exceptions are thrown. 
+Exceptions are just created and returned to the calling code which must decide what to do with them.
 
-## Uso
-Exemplo de um método responsável pela operação de validação.
+## Use
+Example of a method responsible for the validation operation.
 ```C#
 public static Result<string> TryValidate(string? s, IFormatProvider? provider = default)
 {
@@ -34,7 +33,7 @@ public static Result<string> TryValidate(string? s, IFormatProvider? provider = 
 ```
 <br>
 
-Exemplo de dois métodos que usam `Result`.
+Example of two methods that use `Result`.
 
 ```C#
 public static Result<Name> TryParse(string? s, IFormatProvider? provider = default) =>
@@ -49,7 +48,7 @@ public static bool IsValid(string? s, IFormatProvider? provider = null) =>
 ```
 <br>
 
-## Métodos públicos
+## Public Methods
 ### Match
 ```C#
 R Match<R>(Func<T, R> Success, Func<Exception, R> Failure)
@@ -72,11 +71,12 @@ R CaseSuccess<R>(Func<T, R> Success, Func<Exception, R> defaultValue)
 bool CaseSuccess(Action<T> Success)
 ```
     If it is a successful result, it executes the Success action, otherwise it returns false.
-###  CaseFailure
+###  ValueOrDefault
 ```C#
-T CaseFailure(Func<Exception, T> Failure) => Match(x => x, Failure)
+T ValueOrDefault(Func<Exception, T> Failure) => Match(value => value, Failure)
 ```
     If it is a successful result, it returns the value of the result, otherwise it returns the value of the Failure function.
+### CaseFailure
 ```C#
 bool CaseFailure(Action<Exception> Failure)
 ```

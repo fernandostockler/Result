@@ -20,6 +20,8 @@
 	<Version>1.0.0.0</Version>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageId>Stockler.Result</PackageId>
+	<PackageProjectUrl>https://fernandostockler.github.io/Result/</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/fernandostockler/Result</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

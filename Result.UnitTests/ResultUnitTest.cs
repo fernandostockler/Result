@@ -12,7 +12,7 @@ public class ResultTests
 
     [Test]
     public void VerifyCaseSuccessMethod()
-    {      
+    {
         Result<int> successfulResult = 43;
 
         int value = 0;
@@ -55,7 +55,7 @@ public class ResultTests
     {
         Result<int> successfulResult = 43;
 
-        int failureCode = successfulResult.CaseFailure(e => 42);
+        int failureCode = successfulResult.ValueOrDefault(e => 42);
 
         _ = failureCode.Should().Be(43);
 
@@ -63,7 +63,7 @@ public class ResultTests
 
         Result<Exception> failedResult = new(new InvalidOperationException("failedResult"));
 
-        var result = failedResult.CaseFailure(e => e);
+        var result = failedResult.ValueOrDefault(e => e);
 
         _ = result.Should().BeOfType<InvalidOperationException>();
         _ = result.Message.Should().Be("failedResult");
@@ -168,7 +168,7 @@ public class ResultTests
 
         string value = string.Empty;
 
-        string result2 = result.CaseFailure(e => value = e.Message);
+        string result2 = result.ValueOrDefault(e => value = e.Message);
 
         _ = result2.Should().Be("invalid");
 
