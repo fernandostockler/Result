@@ -72,6 +72,18 @@ public readonly record struct Result<T>
     [Pure] public bool IsFailure() => Status is ResultStatus.Failure;
 
 
+
+    //TODO: PUBLICAR NOVA VERSÃO COM O MÉTODO ValueOrDefault().
+
+
+
+    /// <summary>
+    /// If it is a successful result, return the Value, otherwise return defualt(T).
+    /// Use IsSuccess() before call this method to ensure the value is valid.
+    /// </summary>
+    /// <returns></returns>
+    public T? ValueOrDefault() => IsSuccess() ? Value! : default;
+
     /// <summary>
     /// If it is a successful result, execute the Success action and return <see langword="true"/>, otherwise return <see langword="false"/>.
     /// </summary>
