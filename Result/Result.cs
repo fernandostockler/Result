@@ -58,6 +58,10 @@ public readonly record struct Result<T>
     /// <param name="value">Value</param>
     [Pure] public static implicit operator Result<T>(T value) => new(value);
 
+    /// <summary>
+    /// loaded type
+    /// </summary>
+    [Pure] public Type Type => typeof(T);
 
     /// <summary>
     /// Verify if the result of the operation was successful.

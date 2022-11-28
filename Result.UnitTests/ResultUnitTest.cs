@@ -51,7 +51,7 @@ public class ResultTests
     }
 
     [Test]
-    public void VerifyCaseFailureWithFunctionMethod()
+    public void VerifyCaseFailureWithFunctionMethod() 
     {
         Result<int> successfulResult = 43;
 
@@ -144,14 +144,13 @@ public class ResultTests
 
         //Result<string> nameResult = resultPerson.Map(p => $"{p.FirstName}, {p.LastName}. ToDoList: contains {p.ToDoList.Count()} items");
 
-        Result<string> nameResult = resultPerson
+        var nameResult = resultPerson
             .Map(p => p.FirstName)
             .Map(x => x + " => ")
-            .Map(x => x + "Wins.");
+            .Map(x => x + "Wins.")
+            .Match(z => z, e => e.Message);
 
-        string name = nameResult.CaseSuccess(x => x, e => e.Message);
-
-        _ = name.Should().Be("Joe => Wins.");
+        _ = nameResult.Should().Be("Joe => Wins.");
         //_ = name.Should().Be("Joe, Smith. ToDoList: contains 3 items");
     }
 
@@ -187,12 +186,22 @@ public class ResultTests
     [Test]
     public void VerifyToString()
     {
-        var test = new Result<string>(null as string);
+        Result<string> test = new(null as string);
 
         _ = test.ToString().Should().Be("(null)");
 
-        var test2 = new Result<string>(null as Exception);
+        Result<string> test2 = new(null as Exception);
 
         _ = test2.ToString().Should().Be("(invalid)");
+    }
+
+    [Test]
+    public void VerifyToString2()
+    {
+        Result<int> test = new(42);
+
+        var testResult = test
+            .Map(x => x.ToString());
+
     }
 }
